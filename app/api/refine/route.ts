@@ -10,22 +10,14 @@ const groq = new Groq({
 
 export async function POST(req: NextRequest) {
   try {
-    const { sessionId, text, mode } = await req.json();
+    const { text, provider, action, userId } = await req.json();
 
-    if (!sessionId || !text || !mode) {
+    if (!provider || !text || !action) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const idToken = authHeader.split("Bearer ")[1];
-    const decoded = await getAuth().verifyIdToken(idToken);
-
     // fetch account doc to check if pro
-    const accountSnap = await adminDb.collection("accounts").doc(decoded.uid).get();
+    const accountSnap = await adminDb.collection("accounts").doc(userId).get();
     if (!accountSnap.exists || accountSnap.data()?.accountType !== "pro") {
       return NextResponse.json({ error: "Pro account required" }, { status: 403 });
     }
@@ -37,7 +29,7 @@ export async function POST(req: NextRequest) {
       shorten: "Rewrite this text in a shorter form:",
     };
 
-    const prompt = `${promptMap[mode]}\n\n${text}`;
+    const prompt = `${promptMap[action]}\n\n${text}`;
     const completion = await groq.chat.completions.create({
       model: "llama3-8b-8192", // cheap & good for text ops
       messages: [{ role: "user", content: prompt }],

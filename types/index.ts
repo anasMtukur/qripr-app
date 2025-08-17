@@ -25,3 +25,13 @@ export interface JoinSessionResult {
     sharedKey: CryptoKey;
     keyPair: CryptoKeyPair;
 }
+
+export type RefineAction = 'summarize' | 'elaborate' | 'formalize' | 'shorten';
+export type Provider = 'groq' | 'openai' | 'anthropic';
+
+export interface RefineRequest {
+  text: string;
+  provider?: Provider;
+  action: RefineAction;
+  userId: string;
+}

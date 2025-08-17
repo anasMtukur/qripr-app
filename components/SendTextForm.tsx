@@ -34,7 +34,7 @@ export default function SendTextForm({ sessionId, sessionMeta, devices }: SendTe
         toast.error('No private key found locally. Join the session first.')
       }
     }
-
+    init();
   }, [sessionId])
 
   const sendMessage = async () => {

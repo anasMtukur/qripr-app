@@ -13,6 +13,7 @@ export default function TextList({messages}: TextListProps) {
   return (
     messages.map((m, i) => (
       <TextItem 
+        key={i} 
         index={i} 
         text={m.plain}
         sender={`${m.senderPublicKeyBase64.substring(0, 12)}${m.senderPublicKeyBase64.slice(-6)}..`} 
